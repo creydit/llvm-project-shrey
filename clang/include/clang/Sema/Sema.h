@@ -772,6 +772,9 @@ public:
       const CXXCastPath *BasePath = nullptr,
       CheckedConversionKind CCK = CheckedConversionKind::Implicit);
 
+  //Shreyansh MP
+  ExprResult ActOnSuperAdd5(Scope *S, SourceLocation OpLoc, Expr *InputExpr);
+
   /// ScalarTypeToBooleanCastKind - Returns the cast kind corresponding
   /// to the conversion from scalar type ScalarTy to the Boolean type.
   static CastKind ScalarTypeToBooleanCastKind(QualType ScalarTy);

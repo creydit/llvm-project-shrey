@@ -21,6 +21,9 @@
 
 #include "llvm-c/Types.h"
 
+
+
+
 LLVM_C_EXTERN_C_BEGIN
 
 /**
@@ -129,6 +132,7 @@ typedef enum {
   LLVMExtractValue   = 53,
   LLVMInsertValue    = 54,
   LLVMFreeze         = 68,
+  LLVMSUPERADD5      = 77,
 
   /* Atomic operators */
   LLVMFence          = 55,

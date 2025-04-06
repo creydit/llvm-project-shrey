@@ -26,6 +26,7 @@
 #include "llvm/IR/GlobalVariable.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/InlineAsm.h"
+#define LLVMSUPERADD5 77
 #include "llvm/IR/Instructions.h"
 #include "llvm/IR/IntrinsicInst.h"
 #include "llvm/IR/LLVMContext.h"
@@ -2941,11 +2942,14 @@ LLVMRealPredicate LLVMGetFCmpPredicate(LLVMValueRef Inst) {
   return (LLVMRealPredicate)0;
 }
 
-LLVMOpcode LLVMGetInstructionOpcode(LLVMValueRef Inst) {
-  if (Instruction *C = dyn_cast<Instruction>(unwrap(Inst)))
-    return map_to_llvmopcode(C->getOpcode());
-  return (LLVMOpcode)0;
+LLVMOpcode LLVMGetInstructionOpcode(LLVMValueRef Val) {
+  #define HANDLE_INST(NUM, OPCODE, CLASS) \
+    if (auto *I = dyn_cast<CLASS>(unwrap(Val))) return LLVM##OPCODE;
+  #include "llvm/IR/Instruction.def"
+  #undef HANDLE_INST
+    return (LLVMOpcode)0;
 }
+  
 
 LLVMValueRef LLVMInstructionClone(LLVMValueRef Inst) {
   if (Instruction *C = dyn_cast<Instruction>(unwrap(Inst)))

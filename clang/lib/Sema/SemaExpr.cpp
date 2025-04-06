@@ -21270,3 +21270,32 @@ ExprResult Sema::CreateRecoveryExpr(SourceLocation Begin, SourceLocation End,
 
   return RecoveryExpr::Create(Context, T, Begin, End, SubExprs);
 }
+
+ExprResult Sema::ActOnSuperAdd5(Scope *S, SourceLocation OpLoc, Expr *InputExpr) {
+  if (!InputExpr)
+    return ExprError();
+
+  QualType Ty = InputExpr->getType();
+
+  if (!Ty->isIntegerType()) {
+    Diag(OpLoc, diag::err_typecheck_expect_int) << Ty;
+    return ExprError();
+  }
+
+  IdentifierInfo *FuncII = &Context.Idents.get("llvm.superadd5");
+  DeclarationName FuncName(FuncII);
+  DeclarationNameInfo FuncNameInfo(FuncName, OpLoc);
+
+  ExprResult Callee = BuildDeclarationNameExpr(CXXScopeSpec(), FuncNameInfo, /*isAddressOfOperand=*/false);
+  if (Callee.isInvalid())
+    return ExprError();
+
+  SmallVector<Expr *, 1> InputExprs;
+  InputExprs.push_back(InputExpr);
+
+  // ✅ Fixed this line — replaced nullptr with OpLoc
+  return BuildCallExpr(S, Callee.get(), OpLoc, InputExprs, OpLoc);
+}
+
+
+

@@ -143,7 +143,7 @@ X86TargetLowering::X86TargetLowering(const X86TargetMachine &TM,
   // X86 instruction cache is coherent with its data cache so we can use the
   // default expansion to a no-op.
   setOperationAction(ISD::CLEAR_CACHE, MVT::Other, Expand);
-
+  setOperationAction(X86ISD::SUPERADD5, MVT::i32, Custom);
   // For 64-bit, since we have so many registers, use the ILP scheduler.
   // For 32-bit, use the register pressure specific scheduling.
   // For Atom, always use ILP scheduling.
@@ -33508,6 +33508,25 @@ SDValue X86TargetLowering::LowerOperation(SDValue Op, SelectionDAG &DAG) const {
   case X86ISD::CVTPS2PH:        return LowerCVTPS2PH(Op, DAG);
   case ISD::PREFETCH:           return LowerPREFETCH(Op, Subtarget, DAG);
   // clang-format on
+
+  //Shreyansh Instrcution here
+  case ISD::ADD: {
+    SDLoc DL(Op);
+    SDValue Src = Op.getOperand(0);
+    SDValue ConstFive = DAG.getConstant(5, DL, MVT::i32);
+  
+    // Only intercept "add x, 5"
+    if (ConstantSDNode *C = dyn_cast<ConstantSDNode>(Op.getOperand(1))) {
+      if (C->getZExtValue() == 5) {
+        // Replace this add with a custom node
+        return DAG.getNode(X86ISD::SUPERADD5, DL, MVT::i32, Src);
+      }
+    }
+  
+    break;
+  }
+  
+
   }
 }
 
@@ -34707,6 +34726,7 @@ void X86TargetLowering::ReplaceNodeResults(SDNode *N,
 const char *X86TargetLowering::getTargetNodeName(unsigned Opcode) const {
   switch ((X86ISD::NodeType)Opcode) {
   case X86ISD::FIRST_NUMBER:       break;
+  case X86ISD::SUPERADD5: return "X86ISD::SUPERADD5";
 #define NODE_NAME_CASE(NODE) case X86ISD::NODE: return "X86ISD::" #NODE;
   NODE_NAME_CASE(BSF)
   NODE_NAME_CASE(BSR)

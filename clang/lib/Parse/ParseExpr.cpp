@@ -2408,7 +2408,40 @@ Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
       }
       break;
     }
-    case tok::plusplus:    // postfix-expression: postfix-expression '++'
+    //Shreyansh Manipulated this part
+    case tok::plusplus: { // Handle '++' and '+++'
+      SourceLocation FirstPlusLoc = Tok.getLocation();
+      ConsumeToken(); // consume '++' (first two plusses)
+    
+      if (Tok.is(tok::plus)) {
+        SourceLocation ThirdPlusLoc = Tok.getLocation();
+        ConsumeToken(); // consume the third '+'
+    
+        if (!LHS.isInvalid()) {
+          Expr *Arg = LHS.get();
+    
+          // Call your custom semantic action
+          LHS = Actions.ActOnSuperAdd5(getCurScope(), FirstPlusLoc, Arg);
+    
+          if (LHS.isInvalid())
+            LHS = Actions.CreateRecoveryExpr(Arg->getBeginLoc(), ThirdPlusLoc, Arg);
+        }
+    
+        break; // handled i+++
+      }
+    
+      // Regular i++
+      if (!LHS.isInvalid()) {
+        Expr *Arg = LHS.get();
+        LHS = Actions.ActOnPostfixUnaryOp(getCurScope(), FirstPlusLoc, tok::plusplus, Arg);
+        if (LHS.isInvalid())
+          LHS = Actions.CreateRecoveryExpr(Arg->getBeginLoc(), FirstPlusLoc, Arg);
+      }
+    
+      break;
+    }
+    
+    // postfix-expression: postfix-expression '++'
     case tok::minusminus:  // postfix-expression: postfix-expression '--'
       if (!LHS.isInvalid()) {
         Expr *Arg = LHS.get();

@@ -218,7 +218,8 @@ HANDLE_OTHER_INST(64, ExtractValue, ExtractValueInst)// extract from aggregate
 HANDLE_OTHER_INST(65, InsertValue, InsertValueInst)  // insert into aggregate
 HANDLE_OTHER_INST(66, LandingPad, LandingPadInst)  // Landing pad instruction.
 HANDLE_OTHER_INST(67, Freeze, FreezeInst) // Freeze instruction.
-  LAST_OTHER_INST(67)
+HANDLE_OTHER_INST(77, SUPERADD5, Instruction) //My First Custom Instruction
+  LAST_OTHER_INST(77)
 
 #undef  FIRST_TERM_INST
 #undef HANDLE_TERM_INST

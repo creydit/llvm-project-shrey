@@ -92,3 +92,22 @@ include "X86InstrVecCompiler.td"
 
 // Assembler mnemonic/instruction aliases
 include "X86InstrAsmAlias.td"
+
+
+// Custom DAG node for SUPERADD5 (you can place this near the other ISD ops)
+def X86ISD {
+  def SUPERADD5;
+}
+
+
+let hasSideEffects = 0, isCommutable = 1 in
+def SUPERADD5rr : I<0xF8, MRMSrcReg,                    // Custom opcode
+  (outs GR32:$dst), (ins GR32:$src),                    // Register operands
+  "superadd5\t$dst, $src",                              // Assembly syntax
+  [(set GR32:$dst, (X86ISD::SUPERADD5 GR32:$src))]      // Selection DAG pattern
+>, TB, OpSize32, Sched<[WriteALU]>;                     // TB = 0F 38 prefix
+
+def : Pat<
+  (X86ISD::SUPERADD5 GR32:$src),
+  (SUPERADD5rr GR32:$src, GR32:$src)
+>;

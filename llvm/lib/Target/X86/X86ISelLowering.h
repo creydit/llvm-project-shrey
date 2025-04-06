@@ -25,7 +25,10 @@ namespace llvm {
     // X86 Specific DAG Nodes
   enum NodeType : unsigned {
     // Start the numbering where the builtin ops leave off.
-    FIRST_NUMBER = ISD::BUILTIN_OP_END,
+    FIRST_NUMBER = ISD::BUILTIN_OP_END, 
+    
+    //Shreyansh Instruction here
+    SUPERADD5 = FIRST_NUMBER + 1,
 
     /// Bit scan forward.
     BSF,
@@ -989,9 +992,11 @@ namespace llvm {
     // is needed so that this can be expanded with control flow.
     VASTART_SAVE_XMM_REGS,
 
+    
     // Conditional load/store instructions
     CLOAD,
     CSTORE,
+ 
     LAST_MEMORY_OPCODE = CSTORE,
   };
   } // end namespace X86ISD
